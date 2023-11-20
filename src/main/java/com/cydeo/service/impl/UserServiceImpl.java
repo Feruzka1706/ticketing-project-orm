@@ -8,7 +8,6 @@ import com.cydeo.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -67,5 +65,17 @@ public class UserServiceImpl implements UserService {
 
        userRepository.deleteByUserName(username);
     }
+
+    @Override
+    public void delete(String username) {
+        //we will not delete user record from db
+        //change the flag as true and keep the record in db
+        User user = userRepository.findByUserName(username);
+        user.setIsDeleted(true);
+
+        //update the record in db
+        userRepository.save(user);
+    }
+
 
 }
