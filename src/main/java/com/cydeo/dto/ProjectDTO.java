@@ -1,5 +1,6 @@
 package com.cydeo.dto;
 
+import com.cydeo.entity.BaseEntity;
 import com.cydeo.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProjectDTO {
+public class ProjectDTO{
 
     @NotBlank
     private String projectName;
