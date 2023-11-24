@@ -1,10 +1,14 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.TaskDTO;
 import com.cydeo.entity.Task;
+import com.cydeo.entity.User;
 import com.cydeo.enums.Status;
+import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.TaskMapper;
 import com.cydeo.repository.TaskRepository;
+import com.cydeo.repository.UserRepository;
 import com.cydeo.service.TaskService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,8 +23,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
-    TaskRepository taskRepository;
-    TaskMapper taskMapper;
+    private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
+    private final ProjectMapper projectMapper;
+    private final UserRepository userRepository;
+
     @Override
     public TaskDTO findById(Long taskId) {
         Optional<Task> task = taskRepository.findById(taskId);
@@ -54,7 +61,7 @@ public class TaskServiceImpl implements TaskService {
 
         if(foundTask.isPresent()){
             convertedTask.setId(foundTask.get().getId());
-            convertedTask.setTaskStatus(foundTask.get().getTaskStatus());
+            convertedTask.setTaskStatus(taskDTO.getTaskStatus() == null ? foundTask.get().getTaskStatus() : taskDTO.getTaskStatus());
             convertedTask.setAssignedDate(foundTask.get().getAssignedDate());
 
             taskRepository.save(convertedTask);
@@ -65,6 +72,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void delete(Long taskId) {
         Optional<Task> foundTask = taskRepository.findById(taskId);
+
         if(foundTask.isPresent()){
          foundTask.get().setIsDeleted(true);
          taskRepository.save(foundTask.get());
@@ -82,6 +90,38 @@ public class TaskServiceImpl implements TaskService {
     public int totalCompletedTask(String projectCode) {
       return taskRepository.totalCompletedTasks(projectCode);
 
+    }
+
+    @Override
+    public void deleteByProject(ProjectDTO projectDTO) {
+        List<TaskDTO> allTasks = listAllTasksByProject(projectDTO);
+        allTasks.forEach(taskDto -> delete(taskDto.getId()));
+    }
+
+    @Override
+    public void completeByProject(ProjectDTO projectDTO) {
+        List<TaskDTO> allTasks = listAllTasksByProject(projectDTO);
+        allTasks.forEach(taskDTO -> {
+            taskDTO.setTaskStatus(Status.COMPLETE);
+            update(taskDTO);
+        });
+    }
+
+    @Override
+    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) {
+       //let's say we have this particular user employee:
+        User loggedInUser = userRepository.findByUserName("john@employee.com");
+        List<Task> allTasks = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(status,loggedInUser);
+
+        return allTasks.stream()
+                .map(taskMapper::convertToDto).collect(Collectors.toList());
+    }
+
+    private List<TaskDTO> listAllTasksByProject(ProjectDTO projectDTO) {
+       List<Task> allTasks= taskRepository.findAllByProject(projectMapper.convertToEntity(projectDTO));
+
+       return allTasks.stream()
+               .map(taskMapper::convertToDto).collect(Collectors.toList());
     }
 
 }
