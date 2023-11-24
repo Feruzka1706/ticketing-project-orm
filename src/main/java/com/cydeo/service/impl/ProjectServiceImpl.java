@@ -5,15 +5,13 @@ import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.Project;
 import com.cydeo.entity.User;
 import com.cydeo.enums.Status;
+import com.cydeo.mapper.MapperUtil;
 import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.ProjectRepository;
-import com.cydeo.repository.TaskRepository;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
-import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,17 +24,21 @@ public class ProjectServiceImpl implements ProjectService {
      private final ProjectMapper projectMapper;
      private final UserService userService;
      private final UserMapper userMapper;
+
+     private final MapperUtil mapperUtil;
      private final TaskService taskService;
 
     public ProjectServiceImpl(ProjectRepository projectRepository,
                               ProjectMapper projectMapper,
-                               UserService userService,
+                              UserService userService,
                               UserMapper userMapper,
+                              MapperUtil mapperUtil,
                               TaskService taskService) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userService = userService;
         this.userMapper = userMapper;
+        this.mapperUtil = mapperUtil;
         this.taskService = taskService;
     }
 
