@@ -1,21 +1,14 @@
 package com.cydeo.controller;
 
-//import com.cydeo.dto.ProjectDTO;
-//import com.cydeo.dto.UserDTO;
 import com.cydeo.dto.ProjectDTO;
-import com.cydeo.dto.UserDTO;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -34,7 +27,7 @@ public class ProjectController {
     public String createProject(Model model) {
 
         model.addAttribute("project", new ProjectDTO());
-        model.addAttribute("projects", projectService.listAllProjects());
+        model.addAttribute("projects", projectService.listAllProjectsDetails());
         model.addAttribute("managers", userService.listAllByRole("manager"));
 
         return "/project/create";
@@ -46,7 +39,7 @@ public class ProjectController {
 
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute("projects", projectService.listAllProjects());
+            model.addAttribute("projects", projectService.listAllProjectsDetails());
             model.addAttribute("managers", userService.listAllByRole("manager"));
 
             return "/project/create";
@@ -74,7 +67,7 @@ public class ProjectController {
     public String editProject(@PathVariable("projectcode") String projectcode, Model model) {
 
         model.addAttribute("project", projectService.getByProjectCode(projectcode));
-        model.addAttribute("projects", projectService.listAllProjects());
+        model.addAttribute("projects", projectService.listAllProjectsDetails());
         model.addAttribute("managers", userService.listAllByRole("manager"));
 
         return "/project/update";
@@ -86,7 +79,7 @@ public class ProjectController {
 
         if (bindingResult.hasErrors()) {
 
-            model.addAttribute("projects", projectService.listAllProjects());
+            model.addAttribute("projects", projectService.listAllProjectsDetails());
             model.addAttribute("managers", userService.listAllByRole("manager"));
 
             return "/project/update";
