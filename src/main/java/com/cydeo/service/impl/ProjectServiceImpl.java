@@ -93,9 +93,10 @@ public class ProjectServiceImpl implements ProjectService {
         User user = userMapper.convertToEntity(currentUserDto);
 
         //Let's say we have manager with email this harold@manager.com
-       List<Project> listProjects= projectRepository.findAllByAssignedManager(user);
+        //We want to return all list of projects from DB which is assigned to his name by searching the email address
+       List<Project> listOfProjectsForAssignedManager= projectRepository.findAllByAssignedManager(user);
 
-        return listProjects.stream()
+        return listOfProjectsForAssignedManager.stream()
                 .map(project -> {
                     ProjectDTO obj = projectMapper.convertToDto(project);
                     obj.setUnfinishedTaskCounts(taskService.totalNonCompletedTask(project.getProjectCode()));
