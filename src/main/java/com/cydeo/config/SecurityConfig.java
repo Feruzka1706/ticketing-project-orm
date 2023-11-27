@@ -37,10 +37,10 @@ public class SecurityConfig {
 
         return httpSecurity
                 .authorizeRequests()
-                .antMatchers("/user/**").hasRole("ADMIN")  //ROLE_ADMIN
-                .antMatchers("/project/**").hasRole("MANAGER")
-                .antMatchers("/task/employee/**").hasRole("EMPLOYEE")
-                .antMatchers("/task/**").hasRole("MANAGER")
+                .antMatchers("/user/**").hasRole("Admin")  //ROLE_ADMIN
+                .antMatchers("/project/**").hasRole("Manager")
+                .antMatchers("/task/employee/**").hasRole("Employee")
+                .antMatchers("/task/**").hasRole("Manager")
                //.antMatchers("/task/**").hasAnyRole("EMPLOYEE","ADMIN") //multiple ppl can have an access for this end points
                //.antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
