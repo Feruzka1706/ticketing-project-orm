@@ -13,11 +13,9 @@ public class UserPrincipal implements UserDetails {
 
     private User user; //because I want to have an access for User properties
     //that's the reason making HAS a relationship
-
     public UserPrincipal(User user) {
         this.user = user;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -53,7 +51,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override

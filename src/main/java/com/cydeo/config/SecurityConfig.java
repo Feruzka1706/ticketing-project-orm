@@ -5,11 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -37,10 +33,11 @@ public class SecurityConfig {
 
         return httpSecurity
                 .authorizeRequests()
-                .antMatchers("/user/**").hasRole("Admin")  //ROLE_ADMIN
-                .antMatchers("/project/**").hasRole("Manager")
-                .antMatchers("/task/employee/**").hasRole("Employee")
-                .antMatchers("/task/**").hasRole("Manager")
+                //.antMatchers("/user/**").hasRole("Admin")  //ROLE_ADMIN
+                .antMatchers("/user/**").hasAuthority("Admin")
+                .antMatchers("/project/**").hasAuthority("Manager")
+                .antMatchers("/task/employee/**").hasAuthority("Employee")
+                .antMatchers("/task/**").hasAuthority("Manager")
                //.antMatchers("/task/**").hasAnyRole("EMPLOYEE","ADMIN") //multiple ppl can have an access for this end points
                //.antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
@@ -52,12 +49,16 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
-               // .httpBasic() //we don't want to use httpBasic() box
+               //.httpBasic() //we don't want to use httpBasic() box
                 .formLogin()
                     .loginPage("/login")
                     .defaultSuccessUrl("/welcome")
                     .failureUrl("/login?error=true")
                     .permitAll()
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login")
                 .and().build();
     }
 
