@@ -9,9 +9,9 @@ import com.cydeo.repository.UserRepository;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,15 +26,18 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final ProjectService projectService;
     private final TaskService taskService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
                            UserMapper userMapper,
-                          @Lazy ProjectService projectService,
-                           TaskService taskService) {
+                           @Lazy ProjectService projectService,
+                           TaskService taskService,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.projectService = projectService;
         this.taskService = taskService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -55,7 +58,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(UserDTO userDTO) {
-        userRepository.save(userMapper.convertToEntity(userDTO));
+
+        //spring is expecting user details fields, and dto from UI form doesn't have enabled options to set
+        userDTO.setEnabled(true);
+
+        User object = userMapper.convertToEntity(userDTO);
+        object.setPassWord(passwordEncoder.encode(userDTO.getPassWord()));
+
+        userRepository.save(object);
     }
 
     @Override
