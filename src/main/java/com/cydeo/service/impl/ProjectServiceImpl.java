@@ -12,6 +12,7 @@ import com.cydeo.repository.ProjectRepository;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -111,10 +112,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> listAllProjectsDetails() {
 
-        UserDTO currentUserDto = userService.findByUserName("mike@gmail.com");
+        //we are saving to SecurityContextHolder object from application run time
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserDTO currentUserDto = userService.findByUserName(username);
         User user = userMapper.convertToEntity(currentUserDto);
 
-        //Let's say we have manager with email this harold@manager.com
+        //Let's say we have manager with email this mike@gmail.com
         //We want to return all list of projects from DB which is assigned to his name by searching the email address
        List<Project> listOfProjectsForAssignedManager= projectRepository.findAllByAssignedManager(user);
 
